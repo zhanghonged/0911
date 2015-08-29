@@ -14,7 +14,7 @@ def run(user,passw,host,port,cmds):
   #print type(cmds)
   if isinstance(cmds,list):
     for i in xrange(len(cmds)):
-      print 'cmd is "%s" ***********************************************' %cmds[i] 
+      print 'cmd is "%s" **********************************************' %cmds[i] 
       stdin,stdout,stderr=ssh.exec_command(cmds[i])
       for i in stdout.readlines():
         print i,
