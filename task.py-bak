@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+#coding=utf-8
+import paramiko
+import sys
+import appdeploy
+
+
+
+def run(user,passw,host,port,cmds):
+  ssh = paramiko.SSHClient()
+  ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+  ssh.connect(host,port=port,username=user,password=passw)
+  #print type(cmds)
+  if isinstance(cmds,list):
+    for i in xrange(len(cmds)):
+      print 'cmd is "%s" ***********************************************' %cmds[i] 
+      stdin,stdout,stderr=ssh.exec_command(cmds[i])
+      for i in stdout.readlines():
+        print i,
+  else:
+    stdin,stdout,stderr=ssh.exec_command(cmds)
+    for i in stdout.readlines():
+      print i,
+  ssh.close()
+
+def tran(user,passw,host,port,local,remote):
+  t = paramiko.Transport((host,port))
+  t.connect(username=user,password=passw)
+  sftp = paramiko.SFTPClient.from_transport(t)
+  remotepath = remote
+  localpath = local
+  sftp.put(localpath,remotepath)
+  t.close()
+
+def exect(minfo,cmds):
+  for j,k in minfo.items():
+    user=j.split(':')[0]
+    host=j.split(':')[1]
+    port=int(j.split(':')[2])
+    password=k
+    print 'exec host is                                                %s ' %host
+    run(user,password,host,port,cmds)
+
+def zhixing():
+  if len(sys.argv) > 1:
+    if sys.argv[1] == 'run' and len(sys.argv) == 3:
+      print sys.argv[1:]
+      exect(appdeploy.passwords,sys.argv[2])
+    elif sys.argv[1] == 'put' and len(sys.argv) == 4:
+      print sys.argv[1:]
+    elif sys.argv[1] == 'get' and len(sys.argv) == 4:
+      print sys.argv[1:]
+    else:
+      print 'Is Wrong!'
+  else:
+    exect(appdeploy.passwords,appdeploy.cmds)
+
+zhixing()
