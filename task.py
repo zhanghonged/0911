@@ -35,8 +35,6 @@ class run_cmd():
         print i
     ssh.close()
 
-#t=run_cmd('root','hongpan','192.168.1.5',22,'ifconfig br0')
-#t.run()
 
 class uad():
   def __init__(self,user,passw,host,port,local,remote):
@@ -52,8 +50,34 @@ class uad():
     t.connect(username=self.user,password=self.passw)
     sftp = paramiko.SFTPClient.from_transport(t)
     localpath = self.local
-    remotepath = os.path.join(self.remote,self.local.split('/')[-1])
-    sftp.put(localpath,remotepath)
+    remotepath = self.remote
+    #localpath 为一个目录时，put此目录下所有文件及目录
+    if os.path.isdir(localpath):
+      for root,dirs,files in os.walk(localpath):
+        for f in files:
+          localfiles=os.path.join(root,f)
+          remotefiles=localfiles.replace(localpath,remotepath)
+          try:
+            sftp.put(localfiles,remotefiles)
+          except Exception,e:
+            sftp.mkdir(os.path.split(remotefiles)[0])
+            sftp.put(localfiles,remotefiles)
+        for d in dirs:
+          localdirs=os.path.join(root,d)
+          remotedirs=localdirs.replace(localpath,remotepath)
+          try:
+            sftp.mkdir(remotedirs)
+          except Exception,e:
+            print e
+    #localpath 为一个文件时，put此文件
+    if os.path.isfile(localpath):
+      localfiles = localpath
+      remotefiles = os.path.join(remotepath,localpath.split('/')[-1])
+      try:
+        sftp.put(localfiles,remotefiles)
+      #捕获所有异常
+      except Exception,e:
+        print e
     t.close()
 
   def tran_get(self):
@@ -61,12 +85,16 @@ class uad():
     t.connect(username=self.user,password=self.passw)
     sftp = paramiko.SFTPClient.from_transport(t)
     remotepath = self.local
-    localpath = os.path.join(self.remote,remotepath.split('/')[-1])
-    print 'remotepath is %s' %remotepath
-    print 'localpath is %s' %localpath
-    sftp.get(remotepath,localpath)
-    t.close()
-
+    localpath = self.remote
+    try:
+      remotefiles=remotepath
+      localfiles=os.path.join(localpath,remotefiles.split('/')[-1])
+      sftp.get(remotefiles,localfiles)
+    #捕获特定异常 IOErro
+    except IOError,e:
+      print e
+    finally:
+      t.close
 
 
 def exect(minfo,ccc):
