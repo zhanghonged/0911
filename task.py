@@ -5,6 +5,8 @@ import sys
 import os
 import appdeploy
 
+version='1.0.0'
+
 class run_cmd():
   def __init__(self,user,passw,host,port,cmds):
     self.user=user
@@ -95,31 +97,58 @@ class uad():
       print e
     finally:
       t.close
+def help():
+  print '''
+
+--version Display version number.
+
+default,read the appdeploy.py host informatin. appdeploy.passwords.
+no argv:  run the appdeploy.cmds.
+run [cmds]  
+;the "cmds" can be a separate command, or can be multiple commands separated by ';'  example "cd /opt ; pwd"
+get [remotefiles] [localpath]
+put [remotefiles/remotepath] [localpath]
+ 
+        '''
 
 
 def exect(minfo,ccc):
-  for j,k in minfo.items():
-    user=j.split(':')[0]
-    host=j.split(':')[1]
-    port=int(j.split(':')[2])
-    password=k
-    print 'exec host is                                                %s ' %host
-    if len(sys.argv) > 1:
-      if sys.argv[1] == 'run' and len(sys.argv) == 3:
+  if len(sys.argv) > 1:
+    if sys.argv[1] == '--help' and len(sys.argv) == 2:
+      help()
+    if sys.argv[1] == '--version' and len(sys.argv) == 2:
+      print "version is %s" %version
+    for j,k in minfo.items():
+      user=j.split(':')[0]
+      host=j.split(':')[1]
+      port=int(j.split(':')[2])
+      password=k
+      if sys.argv[1] in ['--help','--version'] and len(sys.argv) == 2:
+        pass
+      elif sys.argv[1] == 'run' and len(sys.argv) == 3:
+        print 'exec host is                                                %s ' %host
         print sys.argv[1:]
         r=run_cmd(user,password,host,port,sys.argv[2])
         r.run()
       elif sys.argv[1] == 'put' and len(sys.argv) == 4:
+        print 'exec host is                                                %s ' %host
         print sys.argv[1:]
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_put()
       elif sys.argv[1] == 'get' and len(sys.argv) == 4:
+        print 'exec host is                                                %s ' %host
         print sys.argv[1:]
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_get()
       else:
         print 'Is Wrong,Please input again'
-    else:
+  else:
+    for j,k in minfo.items():
+      user=j.split(':')[0]
+      host=j.split(':')[1]
+      port=int(j.split(':')[2])
+      password=k
+      print 'exec host is                                                %s ' %host
       r=run_cmd(user,password,host,port,ccc)
       r.run()
 
