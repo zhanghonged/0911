@@ -1,6 +1,6 @@
 #coding=utf-8
 
-passwords={'root:192.168.1.5:22':'hongpan','root:192.168.1.4:22':'backup'}
+passwords={'root:192.168.1.5:22':'hongpan','root:192.168.1.4:22':'backup','root:119.29.58.147:22':'XjSRJkd395qTA'}
 #passwords={'root:192.168.1.5:22':'hongpan'}
 
 #kill openfire进程
