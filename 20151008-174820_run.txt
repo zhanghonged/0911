@@ -1,0 +1,60 @@
+2015-10-08 17:48:20 192.168.1.5 start:
+2015-10-08 17:48:21 ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 14:DA:E9:DE:CD:D9  
+
+          inet6 addr: fe80::16da:e9ff:fede:cdd9/64 Scope:Link
+
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+
+          RX packets:1551434 errors:0 dropped:0 overruns:0 frame:0
+
+          TX packets:556586 errors:0 dropped:0 overruns:0 carrier:0
+
+          collisions:0 txqueuelen:1000 
+
+          RX bytes:591895236 (564.4 MiB)  TX bytes:301980482 (287.9 MiB)
+
+          Interrupt:36 
+
+
+
+2015-10-08 17:48:21 192.168.1.4 start:
+2015-10-08 17:48:22 ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 00:23:AE:A0:C8:2B  
+
+          inet addr:192.168.1.4  Bcast:192.168.255.255  Mask:255.255.0.0
+
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+
+          RX packets:945837 errors:0 dropped:0 overruns:0 frame:0
+
+          TX packets:82742 errors:0 dropped:0 overruns:0 carrier:0
+
+          collisions:0 txqueuelen:1000 
+
+          RX bytes:65538620 (62.5 MiB)  TX bytes:111003541 (105.8 MiB)
+
+          Interrupt:169 Memory:dfcf0000-dfd00000 
+
+
+
+2015-10-08 17:48:22 119.29.58.147 start:
+2015-10-08 17:48:23 ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 52:54:00:AC:91:73  
+
+          inet addr:10.249.175.215  Bcast:10.249.175.255  Mask:255.255.252.0
+
+          inet6 addr: fe80::5054:ff:feac:9173/64 Scope:Link
+
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+
+          RX packets:1131728368 errors:0 dropped:0 overruns:0 frame:0
+
+          TX packets:115392387 errors:0 dropped:0 overruns:0 carrier:0
+
+          collisions:0 txqueuelen:1000 
+
+          RX bytes:78986484146 (73.5 GiB)  TX bytes:29141754227 (27.1 GiB)
+
+
+

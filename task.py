@@ -1,12 +1,24 @@
 #!/usr/bin/env python
 #coding=utf-8
 import paramiko
-import sys
+import sys,time
 import os
 import appdeploy
 import threading
 
-version='1.0.0'
+version='1.0.1'
+
+logdate=time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))
+def wlog(cont):
+  if len(sys.argv) > 1:
+    b=sys.argv[1]
+  else:
+    b='empty'
+  log=open('%s_%s.txt' % (logdate,b) ,'a')
+  try:
+    log.write('%s\n' %cont)
+  finally:
+    log.close()
 
 class run_cmd():
   def __init__(self,user,passw,host,port,cmds):
@@ -24,18 +36,28 @@ class run_cmd():
     #如果命令是列表形式
     if isinstance(self.cmds,list):
       for i in xrange(len(self.cmds)):
+        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        log='%s %s' %(date,self.cmds[i])
+        wlog(log)
         print 'cmd is "%s" **********************************************' %self.cmds[i]
         stdin,stdout,stderr=ssh.exec_command(self.cmds[i])
         for i in stdout.readlines():
           print i,
+          wlog(i)
         for i in stderr.readlines():
           print i,
+          wlog(i)
     else:
+      date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+      log='%s %s' % (date,self.cmds)
+      wlog(log)
       stdin,stdout,stderr=ssh.exec_command(self.cmds)
       for i in stdout.readlines():
         print i,
+        wlog(i)
       for i in stderr.readlines():
         print i
+        wlog(i)
     ssh.close()
 
 class uad(threading.Thread):
@@ -128,6 +150,9 @@ def exect(minfo,ccc):
       elif sys.argv[1] == 'run' and len(sys.argv) == 3:
         print 'exec host is                                                %s ' %host
         print sys.argv[1:]
+        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        log='%s %s start:' %(date,host)
+        wlog(log)
         r=run_cmd(user,password,host,port,sys.argv[2])
         r.run()
       elif sys.argv[1] == 'put' and len(sys.argv) == 4:
@@ -149,6 +174,9 @@ def exect(minfo,ccc):
       port=int(j.split(':')[2])
       password=k
       print 'exec host is                                                %s ' %host
+      date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+      log='%s %s start:' %(date,host)
+      wlog(log)
       r=run_cmd(user,password,host,port,ccc)
       r.run()
 

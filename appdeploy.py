@@ -8,5 +8,6 @@ passwords={'root:192.168.1.5:22':'hongpan','root:192.168.1.4:22':'backup','root:
 
 #启动openfire
 #cmds=['source /etc/profile; /opt/openfire/bin/openfirectl start']
-cmds=['ifconfig br0 ; pwd']
+#cmds=['ifconfig eth0 ; pwd']
+cmds=['ifconfig eth0', 'pwd']
 
