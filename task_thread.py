@@ -8,15 +8,6 @@ import threading
 
 version='1.0.1'
 
-logdate=time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))
-
-def wlog(cont):
-  log=open('%s.txt' %logdate ,'a')
-  try:
-    log.write('%s\n' %cont)
-  finally:
-    log.close()
-
 
 class run_cmd(threading.Thread):
   def __init__(self,user,passw,host,port,cmds):
@@ -35,9 +26,6 @@ class run_cmd(threading.Thread):
     #如果命令是列表形式
     if isinstance(self.cmds,list):
       for i in xrange(len(self.cmds)):
-        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        log='%s %s' %(date,self.cmds[i])
-        wlog(log)
         print 'cmd is "%s" **********************************************' %self.cmds[i]
         stdin,stdout,stderr=ssh.exec_command(self.cmds[i])
         for i in stdout.readlines():
@@ -45,16 +33,11 @@ class run_cmd(threading.Thread):
         for i in stderr.readlines():
           print i,
     else:
-      date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-      log='%s %s' % (date,self.cmds)
-      wlog(log)
       stdin,stdout,stderr=ssh.exec_command(self.cmds)
       for i in stdout.readlines():
         print i,
-        wlog(i)
       for i in stderr.readlines():
         print i
-        wlog(i)
     ssh.close()
 
 class tran_put(threading.Thread):
@@ -160,9 +143,6 @@ def exect(minfo,ccc):
       elif sys.argv[1] == 'run' and len(sys.argv) == 3:
         print 'exec host is                                                %s ' %host
         print sys.argv[1:]
-        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        log='%s %s start:' %(date,host)
-        wlog(log)
         r=run_cmd(user,password,host,port,sys.argv[2])
         r.start()
       elif sys.argv[1] == 'put' and len(sys.argv) == 4:

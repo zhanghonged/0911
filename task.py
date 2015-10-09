@@ -1,12 +1,8 @@
 #!/usr/bin/env python
 #coding=utf-8
-import paramiko
-import sys,time
-import os
+import paramiko,sys,time,os,threading
 import appdeploy
-import threading
-
-version='1.0.1'
+import help
 
 logdate=time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))
 def wlog(cont):
@@ -60,7 +56,7 @@ class run_cmd():
         wlog(i)
     ssh.close()
 
-class uad(threading.Thread):
+class uad():
   def __init__(self,user,passw,host,port,local,remote):
     self.user=user
     self.passw=passw
@@ -86,6 +82,7 @@ class uad(threading.Thread):
           except Exception,e:
             sftp.mkdir(os.path.split(remotefiles)[0])
             sftp.put(localfiles,remotefiles)
+        # 针对空目录
         for d in dirs:
           localdirs=os.path.join(root,d)
           remotedirs=localdirs.replace(localpath,remotepath)
@@ -93,12 +90,19 @@ class uad(threading.Thread):
             sftp.mkdir(remotedirs)
           except Exception,e:
             print e
+            wlog(e)
+      date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+      log='complete put at %s!' %date
+      wlog(log)
     #localpath 为一个文件时，put此文件
     if os.path.isfile(localpath):
       localfiles = localpath
       remotefiles = os.path.join(remotepath,localpath.split('/')[-1])
       try:
         sftp.put(localfiles,remotefiles)
+        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        log='complete put at %s!' %date
+        wlog(log)
       #捕获所有异常
       except Exception,e:
         print e
@@ -117,21 +121,13 @@ class uad(threading.Thread):
     #捕获特定异常 IOErro
     except IOError,e:
       print e
+      wlog(e)
     finally:
       t.close
-def help():
-  print '''
+      date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+      log='complete get at %s!' %date
+      wlog(log)
 
---version Display version number.
-
-default,read the appdeploy.py host informatin. appdeploy.passwords.
-no argv:  run the appdeploy.cmds.
-run [cmds]  
-;the "cmds" can be a separate command, or can be multiple commands separated by ';'  example "cd /opt ; pwd"
-get [remotefiles] [localpath]
-put [remotefiles/remotepath] [localpath]
- 
-        '''
 
 
 def exect(minfo,ccc):
@@ -151,18 +147,26 @@ def exect(minfo,ccc):
         print 'exec host is                                                %s ' %host
         print sys.argv[1:]
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
-        log='%s %s start:' %(date,host)
+        log='%s %s start run command:' %(date,host)
         wlog(log)
         r=run_cmd(user,password,host,port,sys.argv[2])
         r.run()
       elif sys.argv[1] == 'put' and len(sys.argv) == 4:
         print 'exec host is                                                %s ' %host
         print sys.argv[1:]
+        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        log='%s %s start put' %(date,host)
+        wlog(log)
+        wlog(sys.argv[1:])
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_put()
       elif sys.argv[1] == 'get' and len(sys.argv) == 4:
         print 'exec host is                                                %s ' %host
         print sys.argv[1:]
+        date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
+        log='%s %s start get' %(date,host)
+        wlog(log)
+        wlog(sys.argv[1:])
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_get()
       else:
@@ -180,7 +184,7 @@ def exect(minfo,ccc):
       r=run_cmd(user,password,host,port,ccc)
       r.run()
 
-exect(appdeploy.passwords,appdeploy.cmds)
+#exect(appdeploy.passwords,appdeploy.cmds)
 
 
 '''
