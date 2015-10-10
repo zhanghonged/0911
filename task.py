@@ -2,19 +2,8 @@
 #coding=utf-8
 import paramiko,sys,time,os,threading
 import appdeploy
-import help
+import help,addlog
 
-logdate=time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))
-def wlog(cont):
-  if len(sys.argv) > 1:
-    b=sys.argv[1]
-  else:
-    b='empty'
-  log=open('%s_%s.txt' % (logdate,b) ,'a')
-  try:
-    log.write('%s\n' %cont)
-  finally:
-    log.close()
 
 class run_cmd():
   def __init__(self,user,passw,host,port,cmds):
@@ -34,26 +23,26 @@ class run_cmd():
       for i in xrange(len(self.cmds)):
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         log='%s %s' %(date,self.cmds[i])
-        wlog(log)
+        addlog.wlog(log)
         print 'cmd is "%s" **********************************************' %self.cmds[i]
         stdin,stdout,stderr=ssh.exec_command(self.cmds[i])
         for i in stdout.readlines():
           print i,
-          wlog(i)
+          addlog.wlog(i)
         for i in stderr.readlines():
           print i,
-          wlog(i)
+          addlog.wlog(i)
     else:
       date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
       log='%s %s' % (date,self.cmds)
-      wlog(log)
+      addlog.wlog(log)
       stdin,stdout,stderr=ssh.exec_command(self.cmds)
       for i in stdout.readlines():
         print i,
-        wlog(i)
+        addlog.wlog(i)
       for i in stderr.readlines():
         print i
-        wlog(i)
+        addlog.wlog(i)
     ssh.close()
 
 class uad():
@@ -90,10 +79,10 @@ class uad():
             sftp.mkdir(remotedirs)
           except Exception,e:
             print e
-            wlog(e)
+            addlog.wlog(e)
       date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
       log='complete put at %s!' %date
-      wlog(log)
+      addlog.wlog(log)
     #localpath 为一个文件时，put此文件
     if os.path.isfile(localpath):
       localfiles = localpath
@@ -102,7 +91,7 @@ class uad():
         sftp.put(localfiles,remotefiles)
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         log='complete put at %s!' %date
-        wlog(log)
+        addlog.wlog(log)
       #捕获所有异常
       except Exception,e:
         print e
@@ -121,21 +110,22 @@ class uad():
     #捕获特定异常 IOErro
     except IOError,e:
       print e
-      wlog(e)
+      addlog.wlog(e)
     finally:
       t.close
       date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
       log='complete get at %s!' %date
-      wlog(log)
+      addlog.wlog(log)
 
 
 
 def exect(minfo,ccc):
   if len(sys.argv) > 1:
     if sys.argv[1] == '--help' and len(sys.argv) == 2:
-      help()
+      print help.help()
     if sys.argv[1] == '--version' and len(sys.argv) == 2:
-      print "version is %s" %version
+      ver=help.version()
+      print "version is %s" %ver
     for j,k in minfo.items():
       user=j.split(':')[0]
       host=j.split(':')[1]
@@ -148,7 +138,7 @@ def exect(minfo,ccc):
         print sys.argv[1:]
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         log='%s %s start run command:' %(date,host)
-        wlog(log)
+        addlog.wlog(log)
         r=run_cmd(user,password,host,port,sys.argv[2])
         r.run()
       elif sys.argv[1] == 'put' and len(sys.argv) == 4:
@@ -156,8 +146,8 @@ def exect(minfo,ccc):
         print sys.argv[1:]
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         log='%s %s start put' %(date,host)
-        wlog(log)
-        wlog(sys.argv[1:])
+        addlog.wlog(log)
+        addlog.wlog(sys.argv[1:])
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_put()
       elif sys.argv[1] == 'get' and len(sys.argv) == 4:
@@ -165,8 +155,8 @@ def exect(minfo,ccc):
         print sys.argv[1:]
         date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
         log='%s %s start get' %(date,host)
-        wlog(log)
-        wlog(sys.argv[1:])
+        addlog.wlog(log)
+        addlog.wlog(sys.argv[1:])
         p=uad(user,password,host,port,sys.argv[2],sys.argv[3])
         p.tran_get()
       else:
@@ -180,11 +170,11 @@ def exect(minfo,ccc):
       print 'exec host is                                                %s ' %host
       date=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(time.time()))
       log='%s %s start:' %(date,host)
-      wlog(log)
+      addlog.wlog(log)
       r=run_cmd(user,password,host,port,ccc)
       r.run()
 
-#exect(appdeploy.passwords,appdeploy.cmds)
+exect(appdeploy.passwords,appdeploy.cmds)
 
 
 '''

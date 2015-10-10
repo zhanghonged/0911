@@ -5,8 +5,8 @@ import sys,time
 import os
 import appdeploy
 import threading
+import help
 
-version='1.0.1'
 
 
 class run_cmd(threading.Thread):
@@ -112,27 +112,14 @@ class tran_get(threading.Thread):
       t.close
 
 
-def help():
-  print '''
-
---version Display version number.
-
-default,read the appdeploy.py host informatin. appdeploy.passwords.
-no argv:  run the appdeploy.cmds.
-run [cmds]  
-;the "cmds" can be a separate command, or can be multiple commands separated by ';'  example "cd /opt ; pwd"
-get [remotefiles] [localpath]
-put [remotefiles/remotepath] [localpath]
- 
-        '''
-
 
 def exect(minfo,ccc):
   if len(sys.argv) > 1:
     if sys.argv[1] == '--help' and len(sys.argv) == 2:
-      help()
+      print help.help()
     if sys.argv[1] == '--version' and len(sys.argv) == 2:
-      print "version is %s" %version
+      ver=help.version()
+      print "version is %s" %ver
     for j,k in minfo.items():
       user=j.split(':')[0]
       host=j.split(':')[1]
