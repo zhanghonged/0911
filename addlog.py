@@ -2,6 +2,9 @@
 import time,sys
 
 
+reload(sys)
+sys.setdefaultencoding( "utf-8" )
+
 logdate=time.strftime('%Y%m%d-%H%M%S',time.localtime(time.time()))
 def wlog(cont):
   if len(sys.argv) > 1:
